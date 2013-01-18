@@ -3,15 +3,17 @@
 <head>
     <meta charset="utf-8" />
     <title>Scoreboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
 
     <link href="css/default.css" rel="stylesheet" />
     <script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
     <script src="js/libs/underscore/underscore.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
     <script data-main="js/main" src="js/libs/require/require.js"></script>
 </head>
 <body>
     <div id="wrapper">
-        <div id="scoreboardregion"> <!--data-bind="html: template"-->
+        <div id="scoreboardregion"><!-- data-bind="template: { name: 'template', data: 'gameData' }"-->
 <div id="wildbox" class="gray container">
     <div id="wildlabel">WILD</div>
     <div id="wild" data-bind="text: gameData.currentWild"></div>
@@ -105,8 +107,36 @@
         <div id="total" class="score total lightborder" data-bind="{text: gameData.playerTotalScores[3]}"></div>
     </div>
 </div>
-
         </div>
+<div id="controllerregion">
+<div id="controllerbox" class="black container">
+    <p class="instructions">Click or tap the winner</p>
+    <div id="c-0" class="gray playercontroller lightborder">
+        <div class="controllername">Mark</div>
+        <input type="number" class="controllerscore hidden"></input>
+        <input type="button" class="winnerbtn blue lightborder" data-bind="click: function() { pickWinner(0); }" value="WINNER!" />
+    </div>
+    <div id="c-1" class="gray playercontroller lightborder">
+        <div class="controllername">Tim</div>
+        <input type="number" class="controllerscore hidden"></input>
+        <div class="winner hidden">Winner</div>
+        <input type="button" class="winnerbtn blue lightborder" data-bind="click: function() { pickWinner(1); }" value="WINNER!" />
+    </div>
+    <div id="c-2" class="gray playercontroller lightborder">
+        <div class="controllername">Gwen</div>
+        <input type="number" class="controllerscore hidden"></input>
+        <div class="winner hidden">Winner</div>
+        <input type="button" class="winnerbtn blue lightborder" data-bind="click: function() { pickWinner(2); }" value="WINNER!" />
+    </div>
+    <div id="c-3" class="gray playercontroller lightborder">
+        <div class="controllername">Donna</div>
+        <input type="number" class="controllerscore hidden"></input>
+        <div class="winner hidden">Winner</div>
+        <input type="button" class="winnerbtn blue lightborder" data-bind="click: function() { pickWinner(3); }" value="WINNER!" />
+    </div>
+    <input type="button" id="controllercompletehand" class="gray lightborder hidden" value="Complete the hand" data-bind="click: controllerCompleteHand" />
+</div>
+</div>
     </div>
 </body>
 </html>

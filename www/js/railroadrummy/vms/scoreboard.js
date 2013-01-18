@@ -29,7 +29,7 @@
             handScores: [[o('-'), o('-'), o('-'), o('-')], [o('-'), o('-'), o('-'), o('-')], [o('-'), o('-'), o('-'), o('-')], [o('-'), o('-'), o('-'), o('-')], [o('-'), o('-'), o('-'), o('-')], [o('-'), o('-'), o('-'), o('-')], [o('-'), o('-'), o('-'), o('-')], [o('-'), o('-'), o('-'), o('-')], [o('-'), o('-'), o('-'), o('-')], [o('-'), o('-'), o('-'), o('-')], [o('-'), o('-'), o('-'), o('-')], [o('-'), o('-'), o('-'), o('-')], [o('-'), o('-'), o('-'), o('-')]],
             playerTotalScores: [o(0),o(0),o(0),o(0)]
         };
-        this.completeHand = function (results) {
+        this.completeHand = function (results, broadcast) {
             var that = this,
                 mappedresults = [],
                 playing = _.filter(this.gameData.players, function (p) { return p.playing(); });
@@ -38,6 +38,11 @@
                 results.length === playing.length &&
                 _.every(results, function (r) { return !isNaN(r); })) {
                 mappedresults = results.map(function (r, i) { return { player: i, score: r } });
+
+                if (broadcast) {
+                    console.log("emit: completeHand", results);
+                    ScoreboardApplication.socket.emit('completeHand', results);
+                }
 
                 //set model values
                 this.gameData.hands.push({
@@ -74,8 +79,32 @@
                 $("div#total").removeClass("winning");
                 var winningPlayer = _.sortBy($("div#total").map(function (i, el) { return { player: i, score: parseInt($(el).text()) }; }), 'score')[0].player;
                 $("div#p-" + winningPlayer + " div#total").addClass("winning");
+                //reset controller form
+                $(".winnerbtn").removeClass("winning").addClass("blue").removeClass("hidden");
+                $("input.controllerscore").val("").addClass("hidden");
+                $("#controllercompletehand").addClass("hidden");
+            }
+        };
+       
+        this.pickWinner = function(winner) {
+            for (var i=0; i < 4; i++) {
+                if (i === winner) {
+                    $("#c-" + i + " input.winnerbtn").removeClass("blue").addClass("winning");
+                }
+                else {
+                    $("#c-" + i + " input.winnerbtn").addClass("hidden");
+                    $("#c-" + i + " input.controllerscore").removeClass("hidden"); 
+                    $("#controllercompletehand").removeClass("hidden");
+                }
             }
         };
         
+        this.controllerCompleteHand = function() {
+            var results = $("input[type=number]").map(function (idx, el) {
+                return parseInt($(el).val()) || 0;
+            }).toArray();
+
+            ScoreboardApplication.scoreboardView.completeHand(results, true);
+        };
     };
 });

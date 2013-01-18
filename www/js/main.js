@@ -16,5 +16,11 @@ require([
         scoreboardView: new ScoreboardView()
     }
     
-    ko.applyBindings(ScoreboardApplication.scoreboardView, $("#scoreboardregion")[0]);
+    ko.applyBindings(ScoreboardApplication.scoreboardView, $("#wrapper")[0]);
+    ScoreboardApplication.socket = io.connect('http://sb.dineen.biz:8080');
+    ScoreboardApplication.socket.on('completeHand', function (results) {
+        console.log('completeHand: ', results);
+        ScoreboardApplication.scoreboardView.completeHand(results, false);
+    });
+
 });
